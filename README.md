@@ -2,15 +2,16 @@
 
 # LAB | Basic CRUD with Drones
 
-<br><br>
-
 ## Introduction
 
 ![Amazon Prime Air drone](https://s3-eu-west-1.amazonaws.com/ih-materials/uploads/upload_926e75d45f2a997152f4401844b3b4d5.jpg)
 
-The goal of this exercise is to create a basic web application using Express. You should be able to use basic Mongoose methods to Create, Read, Update, and Delete documents in a collection in the database.
+The goal of this exercise is to create a basic REST API using Express.
 
-The app will allow a user to keep track of their drones collection. Users should be able to see a list of their existing drones (which you will seed using previously gained knowledge), add new ones to their collection, update them as well as delete them when you don't use them anymore.
+You should be able to use basic Mongoose methods to Create, Read, Update, and Delete documents in a collection in the database.
+
+The API will allow a user to keep track of their drones collection.
+Users should be able to receive a list of their existing drones (which you will seed using previously gained knowledge), add new ones to their collection, update them as well as delete them when they no longer use them.
 
 ## Requirements
 
@@ -29,15 +30,11 @@ $ git push origin master
 
 - Create Pull Request so your TAs can check up your work.
 
-<br><br>
-
 ## Instructions
-
-<br>
 
 ### Iteration 0 | Initialize the project
 
-This project has already a familiar structure: there are bin, models, views, routes, config and public folders, and _app.js_ file with lots of middleware that "glue" different parts of this application to be able to work together as one.
+This project has already a familiar structure: there are bin, models, routes, config, and an _app.js_ file with lots of middleware that "glue" different parts of this application to be able to work together as one.
 
 After forking and cloning the project, you will have to install all the dependencies:
 
@@ -52,8 +49,6 @@ $  npm run dev
 ```
 
 Now you are ready to start. 🚀
-
-<br>
 
 ### Iteration 1 | Seed the database
 
@@ -80,34 +75,32 @@ _Hint 1_: In case you are struggling with drones' characteristics, you can use t
 
 ```javascript
 const drones = [
-  { name: "Creeper XL 500", propellers: 3, maxSpeed: 12 },
-  { name: "Racer 57", propellers: 4, maxSpeed: 20 },
-  { name: "Courier 3000i", propellers: 6, maxSpeed: 18 }
-];
+  { name: 'Creeper XL 500', propellers: 3, maxSpeed: 12 },
+  { name: 'Racer 57', propellers: 4, maxSpeed: 20 },
+  { name: 'Courier 3000i', propellers: 6, maxSpeed: 18 },
+]
 ```
 
 _Hint 2_: Don't forget to close the connection with the database after you have seeded the database. You are familiar with `mongoose.connection.close()` approach, but you can also check the `.disconnect()` Mongoose method. Click [here](https://mongoosejs.com/docs/api.html) to search through Mongoose docs.
 
-<br>
-
 ## Iteration #2: List the drones
 
-Now that the drones are in the database, you can start working with them. Let's **display a list of all the drones**.
+Now that the drones are in the database, you can start working with them.
+Let's **send a list of all the drones**.
 
 Here is the route you will be using:
 
 | Route     | HTTP Verb | Description     |
 | --------- | --------- | --------------- |
-| `/drones` | GET       | Show all drones |
+| `/drones` | GET       | Send all drones |
 
 Steps you should follow in this iteration:
 
 1. Find the `/drones` GET route in `routes/drones.js`.
-2. Use the Mongoose `.find()` method to retrieve all the drones. Display all the drones on the `drones/list.hbs` view. Make sure you catch the error and output it to the terminal.
-3. In the `drones/list.hbs` file, use a `#each` loop to display tags with each drone's `name`, `propellers`, and `speed`.
-4. Add the link that goes to `/drones` route in the `layout.hbs` file to easier navigate to the list of drones.
-
-<br>
+2. Use the Mongoose `.find()` method to retrieve all the drones.
+3. Return the found drones as a list to the user.
+4. In case of errors, catch them and call `next(error)`.
+5. Test your endpoint in Postman.
 
 ## Iteration #3: Add a new drone
 
@@ -115,18 +108,18 @@ Now that we have a list of drones, you can focus your attention on **saving new 
 
 Here are the routes you will be using:
 
-| Route            | HTTP Verb | Description                   |
-| ---------------- | --------- | ----------------------------- |
-| `/drones/create` | GET       | Show a form to create a drone |
-| `/drones/create` | POST      | Save a drone to the database  |
+| Route     | HTTP Verb | Description                  |
+| --------- | --------- | ---------------------------- |
+| `/drones` | POST      | Save a drone to the database |
 
 Steps you should follow in this iteration:
 
-1. Find the `/drones/create` GET route in `routes/drones.js` and render the `drones/create-form.hbs` view.
-2. The `create-form.hbs` should have the form that will submit on `/drones/create` POST route. The form should have all the fields necessary to create a new drone.
-3. Locate the `/drones/create` POST route in `routes/drones.js` and using `req.body` get all the info user submitted through the form. Use this info to create a new drone in the database in the _drones_ collection. Make sure you redirect to `/drones` if the new drone is successfully created. If there is an error, render again the view so the user can try again to create a drone.
-
-<br>
+1. Locate the `/drones/` POST route in `routes/drones.js`.
+2. Extract from `req.body` all the info the frontend (or postman) has submitted through a form.
+3. Use this info to create a new drone in the database in the _drones_ collection.
+4. If the new drone is successfully created, give a `201 CREATED` response with the new drone.
+5. If there is an error, return a `400 BAD REQUEST` and give the user a message which indicates what is wrong, whether they've missed a field or given the wrong value.
+6. In Postman, test test test!
 
 ## Iteration #4: Update the drone
 
@@ -134,19 +127,19 @@ You can create and list (read) drones, so it is time to proceed to make sure you
 
 Here are the routes you will be using:
 
-| Route              | HTTP Verb | Description                        |
-| ------------------ | --------- | ---------------------------------- |
-| `/drones/:id/edit` | GET       | Show a form to update a drone      |
-| `/drones/:id/edit` | POST      | Save updated drone to the database |
+| Route          | HTTP Verb | Description                        |
+| -------------- | --------- | ---------------------------------- |
+| `/drones/:id/` | POST      | Save updated drone to the database |
 
 Steps you should follow in this iteration:
 
-1. Under each drone information on the `list.hbs`, add a link to the edit page (pointing to the `/drones/<oneDroneId>/edit`). When clicked, the link should take you to the 404 page (still), but the URL should have a format similar to this one: `/drones/123Hgt5y4500Ux8/edit`.
-2. Find the `/drones/:id/edit` GET route in `routes/drones.js` and render the `drones/update-form.hbs` view. Make sure you get the right drone from the database using the available `id` (_hint_: `.findById()`) and pass the drone object to the view.
-3. The `update-form.hbs` should have the pre-filled form with the values of the previously passed drone object.
-4. Locate the `/drones/:id/edit` POST route in `routes/drones.js` and using `req.body` get all the info user submitted through the form. Use this info to update the existing drone in the database. Make sure you redirect to `/drones` if the new drone is successfully updated. If there is an error, render again the view so the user can try again to update a drone. (_Hint_: You can use `.findByIdAndUpdate()` Mongoose method.)
-
-<br>
+1. Set yourself up a postman request for `POST /drones/:id/`. Fill the id variable with an existing drone id.
+2. Locate the `/drones/:id/` POST route in `routes/drones.js`.
+3. Extract from `req.body` all the info user submitted through the frontend/postman.
+4. Use this info to update the existing drone in the database.
+5. If the new drone is successfully updated, send a `200 OK` response with the updated drone.
+6. If there is an error, send a `400 BAD REQUEST` with an error message that indicates what to do to fix the sent data.
+7. If the drone with the sent id does not exist, send a `404 NOT FOUND` with a message that says the drone cannot be found matching that id.
 
 ## Iteration #5: Delete the drone
 
@@ -154,23 +147,20 @@ You have CRU out of CRUD. It is time to allow users to **remove drones** they do
 
 Here is the route you will be using:
 
-| Route                | HTTP Verb | Description                               |
-| -------------------- | --------- | ----------------------------------------- |
-| `/drones/:id/delete` | POST      | Delete a specific drone from the database |
+| Route          | HTTP Verb | Description                               |
+| -------------- | --------- | ----------------------------------------- |
+| `/drones/:id/` | DELETE    | Delete a specific drone from the database |
 
 Steps you should follow in this iteration:
 
-1. Under each drone information on the `list.hbs`, add a small form with action to `/drones/<oneDroneId>/delete` and method POST. After clicking on the Delete button, this form should submit to the action route.
-2. Find the `/drones/:id/delete` POST route in `routes/drones.js` and using `.findByIdAndDelete()` (or `.findByIdAndRemove()`), destroy the document with the given ID from the database.
+1. Find the `DELETE /drones/:id/` route in `routes/drones.js` and using `.findByIdAndDelete()`, destroy the document with the given ID from the database.
 
-<br>
+## Bonus: A Frontend
 
-## Bonus: Styling
+Following the practice of calling the API from the frontend with `fetch` or `axios`,
+create a small webpage that can show all the drones to the user.
+Add some basic styling.
 
-Our app should be pretty ugly right now if you (correctly) focused on the back-end during this exercise. To be a fully functioning web app, we need to add some styles.
-
-In your layout require bootstrap, and add some very basic styles to make our drones app look "ready" for production.
-
-<br>
+You can go further and create forms for creating and updating, as well as a button for deleting.
 
 **Happy coding!**

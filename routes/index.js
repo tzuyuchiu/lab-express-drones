@@ -1,7 +1,11 @@
-const express = require("express");
-const router = express.Router();
+const express = require('express')
+const router = express.Router()
 
-/* GET home page */
-router.get("/", (req, res, next) => res.render("index"));
+/* GET /
 
-module.exports = router;
+It's useful to have a route which we can request to check the API is running.
+Sometimes this is at /health or /check.
+*/
+router.get('/', (req, res, next) => res.json({ success: true }))
+
+module.exports = router
